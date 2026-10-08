@@ -35,7 +35,14 @@ button:focus-visible,a:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .gl{background:rgba(255,255,255,.16)}
 .mini{padding:10px 14px;border-radius:13px;font-weight:600;font-size:14px}
 .x{width:36px;height:36px;border-radius:50%;font-size:14px;display:none}
-.go{width:100%;margin-top:14px;padding:16px;border-radius:20px;font-size:17px;font-weight:700;background:linear-gradient(180deg,#52b0ff,#0a84ff);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 10px 28px rgba(10,132,255,.4)}
+#qbox{display:none;margin-top:14px;animation:up .35s ease both}
+.lbl{font-size:13px;color:var(--t2);padding:0 4px 6px}
+.seg{position:relative;display:flex;padding:3px;border-radius:15px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.1)}
+.seg button{flex:1;position:relative;z-index:1;background:none;padding:11px 0;font-size:14px;font-weight:600;opacity:.6}
+.seg button.on{opacity:1}
+.thumb{position:absolute;top:3px;bottom:3px;left:3px;border-radius:12px;background:rgba(255,255,255,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 4px 12px rgba(0,0,0,.3);transition:transform .4s cubic-bezier(.3,1.35,.5,1)}
+#cost{min-height:18px;margin:10px 4px 0;font-size:12px;color:var(--t2)}
+.go{width:100%;margin-top:8px;padding:16px;border-radius:20px;font-size:17px;font-weight:700;background:linear-gradient(180deg,#52b0ff,#0a84ff);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 10px 28px rgba(10,132,255,.4)}
 .go:disabled{opacity:.7}
 .sp{display:inline-block;width:17px;height:17px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite;vertical-align:-3px;margin-right:9px}
 @keyframes rot{to{transform:rotate(360deg)}}
@@ -43,12 +50,19 @@ button:focus-visible,a:focus-visible{outline:2px solid #fff;outline-offset:2px}
 #msg.err{color:#ff9d9d}#msg.ok{color:#9dffc0}
 #res{display:none;margin-top:16px;padding:12px;animation:up .45s ease both}
 #res img{width:100%;max-height:260px;object-fit:cover;border-radius:20px;display:none;margin-bottom:10px}
-.cap{font-size:14px;line-height:1.45;padding:2px 4px}
+.cap{font-size:14px;line-height:1.45;padding:2px 4px;word-break:break-word}
 .meta{font-size:12px;color:var(--t2);padding:2px 4px 10px}
 .it{display:flex;align-items:center;gap:8px;padding:10px 4px;border-top:1px solid rgba(255,255,255,.12)}
 .it span{flex:1;font-size:15px;font-weight:600}
 .it button{padding:10px 16px;border-radius:13px;font-size:14px;font-weight:600}
 .it .b{background:var(--blue)}
+.hist{margin-top:16px;padding:6px 0;display:none;animation:up .5s ease both}
+.hh{display:flex;justify-content:space-between;align-items:center;padding:10px 18px 4px;font-size:13px;color:var(--t2)}
+.hh button{background:none;font-size:13px;color:#8fc8ff}
+.hi{display:flex;align-items:center;gap:8px;padding:12px 18px;font-size:14px;cursor:pointer;border-top:1px solid rgba(255,255,255,.1)}
+.hi span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hi b{color:var(--t2);font-weight:400}
+.hi:active{background:rgba(255,255,255,.08)}
 .foot{text-align:center;color:rgba(255,255,255,.4);font-size:12px;margin-top:18px}
 #toast{position:fixed;left:50%;top:max(14px,env(safe-area-inset-top));transform:translate(-50%,-90px);padding:12px 20px;border-radius:99px;font-size:14px;font-weight:600;transition:transform .5s cubic-bezier(.3,1.4,.5,1);z-index:30;white-space:nowrap}
 #toast.show{transform:translate(-50%,0)}
@@ -68,12 +82,13 @@ button:focus-visible,a:focus-visible{outline:2px solid #fff;outline-offset:2px}
 <div class="wrap">
   <div class="head">
     <div><h1>Downloader</h1><p class="sub">Tempel link, ketuk Ambil.</p></div>
-    <button class="gear gl" onclick="openSheet()" aria-label="Atur API key">⚙︎</button>
+    <button class="gear gl" id="gear" onclick="openSheet()" aria-label="Atur API key">⚙︎</button>
   </div>
   <div class="card glass">
     <div class="chips">
       <span class="chip" data-p="tiktok">TikTok</span>
       <span class="chip" data-p="instagram">Instagram</span>
+      <span class="chip" data-p="youtube youtu.be">YouTube</span>
       <span class="chip" data-p="facebook fb.watch fb.com">Facebook</span>
       <span class="chip" data-p="twitter x.com">X</span>
       <span class="chip" data-p="pinterest pin.it">Pinterest</span>
@@ -83,6 +98,17 @@ button:focus-visible,a:focus-visible{outline:2px solid #fff;outline-offset:2px}
       <button class="x gl" id="x" onclick="clearAll()" aria-label="Hapus link">✕</button>
       <button class="mini gl" onclick="pasteLink()">Tempel</button>
     </div>
+    <div id="qbox">
+      <div class="lbl">Kualitas YouTube</div>
+      <div class="seg" id="segQ" data-i="2">
+        <i class="thumb"></i>
+        <button data-v="audio">Audio</button>
+        <button data-v="360p">360p</button>
+        <button data-v="720p">720p</button>
+        <button data-v="1080p">1080p</button>
+      </div>
+    </div>
+    <div id="cost"></div>
     <button class="go" id="go" onclick="fetchInfo()">Ambil</button>
     <div id="msg" aria-live="polite"></div>
     <div id="res" class="glass">
@@ -92,6 +118,7 @@ button:focus-visible,a:focus-visible{outline:2px solid #fff;outline-offset:2px}
       <div id="items"></div>
     </div>
   </div>
+  <div class="hist glass" id="hist"></div>
   <p class="foot">Gunakan untuk konten milik sendiri atau yang diizinkan.</p>
 </div>
 
@@ -108,20 +135,40 @@ button:focus-visible,a:focus-visible{outline:2px solid #fff;outline-offset:2px}
 </div>
 
 <script>
-const API='https://api.fastsaver.io/v1/fetch?url=';
-const DEFAULT_KEY=''; // biarkan kosong, jangan tulis key di sini
+const PROXY='https://downloader-api.kamukucing11.workers.dev';
+const API='https://api.fastsaver.io/v1';
 const $=id=>document.getElementById(id);
-function getKey(){try{return localStorage.getItem('fsk')||DEFAULT_KEY}catch(e){return DEFAULT_KEY}}
+let fmt='720p';
+
+function getKey(){try{return localStorage.getItem('fsk')||''}catch(e){return ''}}
 function say(s,c){$('msg').className=c||'';$('msg').textContent=s}
-function toast(s){const t=$('toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
+function toast(s){const t=$('toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
 function openSheet(){$('key').value=getKey();$('ov').classList.add('show')}
 function closeSheet(){$('ov').classList.remove('show')}
 function saveKey(){const v=$('key').value.trim();try{localStorage.setItem('fsk',v)}catch(e){}closeSheet();toast(v?'Key tersimpan':'Key dihapus')}
+function mk(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+function isYT(u){return /(youtube\.com|youtu\.be)/i.test(u)}
+function dur(s){s=Math.round(+s||0);const m=Math.floor(s/60),r=s%60;return m+':'+(r<10?'0':'')+r}
 
+function seg(el,cb){
+  const b=[...el.querySelectorAll('button')],th=el.querySelector('.thumb');
+  th.style.width='calc((100% - 6px)/'+b.length+')';
+  const set=i=>{th.style.transform='translateX('+(i*100)+'%)';b.forEach((x,j)=>x.classList.toggle('on',j==i))};
+  b.forEach((x,i)=>x.onclick=()=>{set(i);cb(x.dataset.v)});
+  set(+el.dataset.i||0);
+}
+seg($('segQ'),v=>{fmt=v;costNote()});
+
+function costNote(){
+  const u=$('url').value.trim();
+  $('cost').textContent=!u?'':isYT(u)?'YouTube memakai 15 kredit per unduhan.':'Memakai sekitar 1,5 kredit per link.';
+}
 function chips(){
   const u=$('url').value.toLowerCase();
   document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',!!u&&c.dataset.p.split(' ').some(p=>u.includes(p))));
   $('x').style.display=u?'block':'none';
+  $('qbox').style.display=isYT(u)?'block':'none';
+  costNote();
 }
 $('url').addEventListener('input',chips);
 $('url').addEventListener('keydown',e=>{if(e.key==='Enter')fetchInfo()});
@@ -141,48 +188,72 @@ function errText(status,d){
   if(status===401)return 'API key salah atau belum diisi';
   if(status===429)return 'Terlalu cepat, tunggu sekitar semenit';
   if(/credit/i.test(m))return 'Kredit API habis';
+  if(/timeout/i.test(m))return 'Video terlalu lama disiapkan, coba lagi';
+  if(/download\.failed/i.test(m))return 'Video tidak bisa diambil. Cek linknya.';
   return m||'Link tidak bisa diambil (privat, dihapus, atau tidak didukung)';
+}
+
+function request(u){
+  const yt=isYT(u);
+  if(PROXY){
+    const P=PROXY.replace(/\/+$/,'');
+    return yt?fetch(P+'/yt',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:u,format:fmt})})
+             :fetch(P+'/?url='+encodeURIComponent(u));
+  }
+  const h={'X-Api-Key':getKey()};
+  return yt?fetch(API+'/youtube/download',{method:'POST',headers:{...h,'Content-Type':'application/json'},body:JSON.stringify({url:u,format:fmt})})
+           :fetch(API+'/fetch?url='+encodeURIComponent(u),{headers:h});
 }
 
 async function fetchInfo(){
   const u=$('url').value.trim();
   if(!u)return say('Isi link dulu','err');
-  if(!getKey()){say('Isi API key dulu lewat tombol ⚙︎','err');openSheet();return}
-  const g=$('go');g.disabled=true;g.innerHTML='<span class="sp"></span>Mengambil...';
+  if(!PROXY&&!getKey()){say('Isi API key dulu lewat tombol ⚙︎','err');openSheet();return}
+  const yt=isYT(u),g=$('go');
+  g.disabled=true;g.innerHTML='<span class="sp"></span>'+(yt?'Menyiapkan (bisa 30 detik)':'Mengambil...');
   say('');$('res').style.display='none';
   try{
-    const r=await fetch(API+encodeURIComponent(u),{headers:{'X-Api-Key':getKey()}});
+    const r=await request(u);
     let d=null;try{d=await r.json()}catch(e){}
     if(!d||d.ok===false||!r.ok)throw errText(r.status,d);
-    show(d);
+    if(yt){
+      const th=d.thumbnails||{};
+      show({source:'youtube',id:d.video_id,type:fmt==='audio'?'audio':'video',download_url:d.download_url,
+        thumbnail_url:th.max||th.low,thumb2:th.low,caption:(d.filename||'').replace(/\.[^.]+$/,''),
+        filename:d.filename,duration:d.duration,quality:fmt});
+      say('Link berlaku 10 menit, unduh sekarang','ok');
+    }else show(d);
+    addHist(u);
   }catch(e){
-    say(typeof e==='string'?e:'Gagal terhubung ke server API (mungkin diblokir browser)','err');
+    say(typeof e==='string'?e:'Gagal terhubung ke server (mungkin diblokir browser)','err');
   }
   g.disabled=false;g.textContent='Ambil';
 }
 
-function mk(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
-
 function show(d){
   const album=d.type==='album';
-  const items=album?(d.items||[]):[{type:d.type,download_url:d.download_url,thumbnail_url:d.thumbnail_url,width:d.width,height:d.height}];
+  const items=album?(d.items||[]):[{type:d.type,download_url:d.download_url,thumbnail_url:d.thumbnail_url}];
   const th=d.thumbnail_url||(items[0]&&items[0].thumbnail_url)||'';
   const im=$('th');
-  if(th){im.onerror=()=>{im.style.display='none'};im.src=th;im.style.display='block'}else im.style.display='none';
+  im.onerror=()=>{if(d.thumb2&&im.src!==d.thumb2){im.src=d.thumb2}else{im.style.display='none'}};
+  if(th){im.src=th;im.style.display='block'}else im.style.display='none';
   $('cap').textContent=(d.caption||'').slice(0,160);
   const bits=[d.source,album?(items.length+' item'):d.type];
+  if(d.quality)bits.push(d.quality);
   if(d.width&&d.height)bits.push(d.width+'×'+d.height);
-  if(d.duration)bits.push(d.duration+' detik');
+  if(d.duration)bits.push(dur(d.duration));
   $('meta').textContent=bits.filter(Boolean).join(', ');
   const box=$('items');box.innerHTML='';
+  const ext=(d.filename&&(d.filename.match(/\.(\w{2,4})$/)||[])[1])||null;
   const base=(d.source||'media').split('.')[0]+'_'+(d.id||Date.now());
   items.forEach((it,i)=>{
     if(!it.download_url)return;
-    const vid=it.type==='video';
+    const kind=it.type==='audio'?'Audio':it.type==='video'?'Video':'Foto';
+    const e=ext||(it.type==='audio'?'mp3':it.type==='video'?'mp4':'jpg');
     const row=mk('div','it');
-    row.append(mk('span','',(vid?'Video':'Foto')+(album?' '+(i+1):'')));
+    row.append(mk('span','',kind+(album?' '+(i+1):'')+(d.quality&&!album?' '+d.quality:'')));
     const b1=mk('button','b','Unduh');
-    b1.onclick=()=>save(it.download_url,base+(album?'_'+(i+1):'')+(vid?'.mp4':'.jpg'),b1);
+    b1.onclick=()=>save(it.download_url,base+(album?'_'+(i+1):'')+'.'+e,b1);
     const b2=mk('button','gl','Buka');
     b2.onclick=()=>window.open(it.download_url,'_blank','noopener,noreferrer');
     row.append(b1,b2);box.append(row);
@@ -212,6 +283,24 @@ async function save(url,name,btn){
   }
   btn.disabled=false;btn.textContent=old;
 }
-chips();
+
+function getH(){try{return JSON.parse(localStorage.getItem('hist')||'[]')}catch(e){return[]}}
+function setH(h){try{localStorage.setItem('hist',JSON.stringify(h))}catch(e){}}
+function addHist(u){setH([u].concat(getH().filter(x=>x!==u)).slice(0,5));renderHist()}
+function renderHist(){
+  const h=getH(),el=$('hist');el.innerHTML='';
+  if(!h.length){el.style.display='none';return}
+  el.style.display='block';
+  const hh=mk('div','hh');hh.append(mk('span','','Terakhir dipakai'));
+  const bt=mk('button','','Hapus');bt.onclick=()=>{setH([]);renderHist()};
+  hh.append(bt);el.append(hh);
+  h.forEach(u=>{
+    const d=mk('div','hi');d.append(mk('span','',u.replace(/^https?:\/\/(www\.)?/,'')),mk('b','','›'));
+    d.onclick=()=>{$('url').value=u;chips();window.scrollTo({top:0,behavior:'smooth'})};
+    el.append(d);
+  });
+}
+if(PROXY)$('gear').style.display='none';
+chips();renderHist();
 </script>
 </body></html>
