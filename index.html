@@ -14,7 +14,122 @@ body{min-height:100vh;font-family:-apple-system,"SF Pro Text",system-ui,Roboto,s
 .bg i:nth-child(1){width:300px;height:300px;background:rgba(255,255,255,.16);top:-90px;left:-70px}
 .bg i:nth-child(2){width:340px;height:340px;background:rgba(90,120,170,.28);bottom:-110px;right:-110px;animation-delay:-8s}
 @keyframes drift{to{transform:translate(50px,70px) scale(1.18)}}
-.glass{background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.04));-webkit-backdrop-filter:blur(28px) saturate(180%);backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(255,255,255,.16);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.4),inset 0 -1px 0 rgba(255,255,255,.06),0 20px 50px rgba(0,0,0,.6);border-radius:28px}
+
+.glass{
+  background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.04));
+  -webkit-backdrop-filter:blur(28px) saturate(180%);
+  backdrop-filter:blur(28px) saturate(180%);
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.4),inset 0 -1px 0 rgba(255,255,255,.06),0 20px 50px rgba(0,0,0,.6);
+  border-radius:28px;
+  position:relative;
+  overflow:hidden;
+}
+
+/* GLASS MENGKILAP */
+.glass::before{
+  content:"";
+  position:absolute;
+  inset:-120%;
+  background:linear-gradient(
+    115deg,
+    transparent 40%,
+    rgba(255,255,255,.03) 44%,
+    rgba(255,255,255,.30) 48%,
+    rgba(255,255,255,.08) 52%,
+    transparent 56%
+  );
+  transform:translateX(-55%) rotate(8deg);
+  animation:glassShine 7s ease-in-out infinite;
+  pointer-events:none;
+  z-index:0;
+}
+
+.glass > *{
+  position:relative;
+  z-index:1;
+}
+
+@keyframes glassShine{
+  0%,65%{
+    transform:translateX(-55%) rotate(8deg);
+    opacity:0;
+  }
+  72%{
+    opacity:1;
+  }
+  90%,100%{
+    transform:translateX(55%) rotate(8deg);
+    opacity:0;
+  }
+}
+
+/* HUJAN SALJU */
+.snow{
+  position:fixed;
+  inset:0;
+  z-index:10;
+  pointer-events:none;
+  overflow:hidden;
+}
+
+.snow i{
+  position:absolute;
+  top:-20px;
+  width:4px;
+  height:4px;
+  border-radius:50%;
+  background:rgba(255,255,255,.88);
+  box-shadow:
+    0 0 6px rgba(255,255,255,.85),
+    0 0 12px rgba(255,255,255,.35);
+  animation:
+    snowfall linear infinite,
+    snowSway ease-in-out infinite alternate;
+}
+
+.snow i:nth-child(1){left:3%;animation-duration:9s,3s;animation-delay:-2s,0s;transform:scale(.7)}
+.snow i:nth-child(2){left:8%;animation-duration:13s,4s;animation-delay:-7s,-1s;transform:scale(1.2)}
+.snow i:nth-child(3){left:14%;animation-duration:10s,3.5s;animation-delay:-4s,-2s;transform:scale(.6)}
+.snow i:nth-child(4){left:21%;animation-duration:15s,5s;animation-delay:-10s,-1s;transform:scale(1)}
+.snow i:nth-child(5){left:28%;animation-duration:11s,4s;animation-delay:-5s,-3s;transform:scale(.8)}
+.snow i:nth-child(6){left:35%;animation-duration:14s,3s;animation-delay:-8s,0s;transform:scale(1.3)}
+.snow i:nth-child(7){left:42%;animation-duration:9s,4s;animation-delay:-3s,-2s;transform:scale(.6)}
+.snow i:nth-child(8){left:49%;animation-duration:12s,5s;animation-delay:-9s,-1s;transform:scale(1)}
+.snow i:nth-child(9){left:56%;animation-duration:16s,3.5s;animation-delay:-12s,-2s;transform:scale(.7)}
+.snow i:nth-child(10){left:63%;animation-duration:10s,4s;animation-delay:-6s,-1s;transform:scale(1.2)}
+.snow i:nth-child(11){left:70%;animation-duration:13s,3s;animation-delay:-11s,-3s;transform:scale(.8)}
+.snow i:nth-child(12){left:77%;animation-duration:15s,5s;animation-delay:-4s,0s;transform:scale(1.1)}
+.snow i:nth-child(13){left:84%;animation-duration:11s,4s;animation-delay:-7s,-2s;transform:scale(.6)}
+.snow i:nth-child(14){left:91%;animation-duration:14s,3.5s;animation-delay:-9s,-1s;transform:scale(1)}
+.snow i:nth-child(15){left:97%;animation-duration:10s,4s;animation-delay:-2s,-3s;transform:scale(.8)}
+
+@keyframes snowfall{
+  0%{
+    top:-20px;
+    opacity:0;
+  }
+  10%{
+    opacity:.9;
+  }
+  90%{
+    opacity:.8;
+  }
+  100%{
+    top:105vh;
+    opacity:0;
+  }
+}
+
+@keyframes snowSway{
+  from{
+    margin-left:-25px;
+  }
+  to{
+    margin-left:25px;
+  }
+}
+
 .wrap{width:100%;max-width:460px;margin-top:2vh}
 .head{display:flex;align-items:flex-end;justify-content:space-between;padding:4px 6px 16px;animation:up .6s ease both}
 h1{margin:0;font-size:34px;font-weight:800;letter-spacing:-.8px}
@@ -74,16 +189,32 @@ button:focus-visible,a:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .sheet a{color:#6cb4ff}
 .sheet .row{display:flex;gap:8px;margin-top:14px}
 .sheet .row button{flex:1;padding:14px;border-radius:16px;font-size:16px;font-weight:600}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .snow{display:none}
+  .glass::before{display:none}
+}
 </style></head>
 <body>
+
 <div class="bg"><i></i><i></i></div>
+
+<!-- HUJAN SALJU -->
+<div class="snow">
+  <i></i><i></i><i></i><i></i><i></i>
+  <i></i><i></i><i></i><i></i><i></i>
+  <i></i><i></i><i></i><i></i><i></i>
+</div>
+
 <div id="toast" class="glass" role="status"></div>
+
 <div class="wrap">
   <div class="head">
     <div><h1>Downloader</h1><p class="sub">Tempel link, ketuk Ambil.</p></div>
     <button class="gear gl" id="gear" onclick="openSheet()" aria-label="Atur API key">⚙︎</button>
   </div>
+
   <div class="card glass">
     <div class="chips">
       <span class="chip" data-p="tiktok">TikTok</span>
@@ -93,11 +224,13 @@ button:focus-visible,a:focus-visible{outline:2px solid #fff;outline-offset:2px}
       <span class="chip" data-p="twitter x.com">X</span>
       <span class="chip" data-p="pinterest pin.it">Pinterest</span>
     </div>
+
     <div class="field">
       <input id="url" placeholder="Tempel link di sini" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Link video">
       <button class="x gl" id="x" onclick="clearAll()" aria-label="Hapus link">✕</button>
       <button class="mini gl" onclick="pasteLink()">Tempel</button>
     </div>
+
     <div id="qbox">
       <div class="lbl">Kualitas YouTube</div>
       <div class="seg" id="segQ" data-i="2">
@@ -108,9 +241,13 @@ button:focus-visible,a:focus-visible{outline:2px solid #fff;outline-offset:2px}
         <button data-v="1080p">1080p</button>
       </div>
     </div>
+
     <div id="cost"></div>
+
     <button class="go" id="go" onclick="fetchInfo()">Ambil</button>
+
     <div id="msg" aria-live="polite"></div>
+
     <div id="res" class="glass">
       <img id="th" referrerpolicy="no-referrer" alt="">
       <div class="cap" id="cap"></div>
@@ -118,7 +255,9 @@ button:focus-visible,a:focus-visible{outline:2px solid #fff;outline-offset:2px}
       <div id="items"></div>
     </div>
   </div>
+
   <div class="hist glass" id="hist"></div>
+
   <p class="foot">Gunakan untuk konten milik sendiri atau yang diizinkan.</p>
 </div>
 
@@ -126,7 +265,11 @@ button:focus-visible,a:focus-visible{outline:2px solid #fff;outline-offset:2px}
   <div class="sheet glass" role="dialog" aria-label="API key">
     <h2>API key</h2>
     <p>Web ini memakai FastSaverAPI. Daftar gratis di <a href="https://api.fastsaver.io/auth" target="_blank" rel="noopener">api.fastsaver.io/auth</a>, salin key (awalan <b>fs_sk_</b>), lalu tempel di sini. Key hanya disimpan di browser ini.</p>
-    <div class="field"><input id="key" type="password" placeholder="fs_sk_..." autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="API key"></div>
+
+    <div class="field">
+      <input id="key" type="password" placeholder="fs_sk_..." autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="API key">
+    </div>
+
     <div class="row">
       <button class="gl" onclick="closeSheet()">Batal</button>
       <button style="background:var(--blue)" onclick="saveKey()">Simpan</button>
@@ -153,16 +296,24 @@ function dur(s){s=Math.round(+s||0);const m=Math.floor(s/60),r=s%60;return m+':'
 function seg(el,cb){
   const b=[...el.querySelectorAll('button')],th=el.querySelector('.thumb');
   th.style.width='calc((100% - 6px)/'+b.length+')';
-  const set=i=>{th.style.transform='translateX('+(i*100)+'%)';b.forEach((x,j)=>x.classList.toggle('on',j==i))};
-  b.forEach((x,i)=>x.onclick=()=>{set(i);cb(x.dataset.v)});
+  const set=i=>{
+    th.style.transform='translateX('+(i*100)+'%)';
+    b.forEach((x,j)=>x.classList.toggle('on',j==i))
+  };
+  b.forEach((x,i)=>x.onclick=()=>{
+    set(i);
+    cb(x.dataset.v)
+  });
   set(+el.dataset.i||0);
 }
+
 seg($('segQ'),v=>{fmt=v;costNote()});
 
 function costNote(){
   const u=$('url').value.trim();
   $('cost').textContent=!u?'':isYT(u)?'YouTube memakai 15 kredit per unduhan.':'Memakai sekitar 1,5 kredit per link.';
 }
+
 function chips(){
   const u=$('url').value.toLowerCase();
   document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',!!u&&c.dataset.p.split(' ').some(p=>u.includes(p))));
@@ -170,19 +321,36 @@ function chips(){
   $('qbox').style.display=isYT(u)?'block':'none';
   costNote();
 }
+
 $('url').addEventListener('input',chips);
-$('url').addEventListener('keydown',e=>{if(e.key==='Enter')fetchInfo()});
+$('url').addEventListener('keydown',e=>{
+  if(e.key==='Enter')fetchInfo()
+});
+
 async function pasteLink(){
-  try{$('url').value=await navigator.clipboard.readText();chips()}
-  catch(e){say('Tekan lama di kotak, lalu pilih Tempel','err')}
+  try{
+    $('url').value=await navigator.clipboard.readText();
+    chips()
+  }
+  catch(e){
+    say('Tekan lama di kotak, lalu pilih Tempel','err')
+  }
 }
-function clearAll(){$('url').value='';$('res').style.display='none';say('');chips();$('url').focus()}
+
+function clearAll(){
+  $('url').value='';
+  $('res').style.display='none';
+  say('');
+  chips();
+  $('url').focus()
+}
 
 function pick(d){
   if(!d)return '';
   const v=d.error||d.detail||d.message||'';
   return typeof v==='string'?v:JSON.stringify(v).slice(0,120);
 }
+
 function errText(status,d){
   const m=pick(d);
   if(status===401)return 'API key salah atau belum diisi';
@@ -195,112 +363,321 @@ function errText(status,d){
 
 function request(u){
   const yt=isYT(u);
+
   if(PROXY){
     const P=PROXY.replace(/\/+$/,'');
-    return yt?fetch(P+'/yt',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:u,format:fmt})})
-             :fetch(P+'/?url='+encodeURIComponent(u));
+    return yt
+      ?fetch(P+'/yt',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({url:u,format:fmt})
+        })
+      :fetch(P+'/?url='+encodeURIComponent(u));
   }
+
   const h={'X-Api-Key':getKey()};
-  return yt?fetch(API+'/youtube/download',{method:'POST',headers:{...h,'Content-Type':'application/json'},body:JSON.stringify({url:u,format:fmt})})
-           :fetch(API+'/fetch?url='+encodeURIComponent(u),{headers:h});
+
+  return yt
+    ?fetch(API+'/youtube/download',{
+        method:'POST',
+        headers:{...h,'Content-Type':'application/json'},
+        body:JSON.stringify({url:u,format:fmt})
+      })
+    :fetch(API+'/fetch?url='+encodeURIComponent(u),{headers:h});
 }
 
 async function fetchInfo(){
   const u=$('url').value.trim();
+
   if(!u)return say('Isi link dulu','err');
-  if(!PROXY&&!getKey()){say('Isi API key dulu lewat tombol ⚙︎','err');openSheet();return}
+
+  if(!PROXY&&!getKey()){
+    say('Isi API key dulu lewat tombol ⚙︎','err');
+    openSheet();
+    return
+  }
+
   const yt=isYT(u),g=$('go');
-  g.disabled=true;g.innerHTML='<span class="sp"></span>'+(yt?'Menyiapkan (bisa 30 detik)':'Mengambil...');
-  say('');$('res').style.display='none';
+
+  g.disabled=true;
+  g.innerHTML='<span class="sp"></span>'+(yt?'Menyiapkan (bisa 30 detik)':'Mengambil...');
+
+  say('');
+  $('res').style.display='none';
+
   try{
     const r=await request(u);
-    let d=null;try{d=await r.json()}catch(e){}
+    let d=null;
+
+    try{
+      d=await r.json()
+    }catch(e){}
+
     if(!d||d.ok===false||!r.ok)throw errText(r.status,d);
+
     if(yt){
       const th=d.thumbnails||{};
-      show({source:'youtube',id:d.video_id,type:fmt==='audio'?'audio':'video',download_url:d.download_url,
-        thumbnail_url:th.max||th.low,thumb2:th.low,caption:(d.filename||'').replace(/\.[^.]+$/,''),
-        filename:d.filename,duration:d.duration,quality:fmt});
+
+      show({
+        source:'youtube',
+        id:d.video_id,
+        type:fmt==='audio'?'audio':'video',
+        download_url:d.download_url,
+        thumbnail_url:th.max||th.low,
+        thumb2:th.low,
+        caption:(d.filename||'').replace(/\.[^.]+$/,''),
+        filename:d.filename,
+        duration:d.duration,
+        quality:fmt
+      });
+
       say('Link berlaku 10 menit, unduh sekarang','ok');
     }else show(d);
+
     addHist(u);
+
   }catch(e){
     say(typeof e==='string'?e:'Gagal terhubung ke server (mungkin diblokir browser)','err');
   }
-  g.disabled=false;g.textContent='Ambil';
+
+  g.disabled=false;
+  g.textContent='Ambil';
 }
 
 function show(d){
   const album=d.type==='album';
-  const items=album?(d.items||[]):[{type:d.type,download_url:d.download_url,thumbnail_url:d.thumbnail_url}];
+
+  const items=album
+    ?(d.items||[])
+    :[{type:d.type,download_url:d.download_url,thumbnail_url:d.thumbnail_url}];
+
   const th=d.thumbnail_url||(items[0]&&items[0].thumbnail_url)||'';
   const im=$('th');
-  im.onerror=()=>{if(d.thumb2&&im.src!==d.thumb2){im.src=d.thumb2}else{im.style.display='none'}};
-  if(th){im.src=th;im.style.display='block'}else im.style.display='none';
+
+  im.onerror=()=>{
+    if(d.thumb2&&im.src!==d.thumb2){
+      im.src=d.thumb2
+    }else{
+      im.style.display='none'
+    }
+  };
+
+  if(th){
+    im.src=th;
+    im.style.display='block'
+  }else{
+    im.style.display='none'
+  }
+
   $('cap').textContent=(d.caption||'').slice(0,160);
+
   const bits=[d.source,album?(items.length+' item'):d.type];
+
   if(d.quality)bits.push(d.quality);
   if(d.width&&d.height)bits.push(d.width+'×'+d.height);
   if(d.duration)bits.push(dur(d.duration));
+
   $('meta').textContent=bits.filter(Boolean).join(', ');
-  const box=$('items');box.innerHTML='';
+
+  const box=$('items');
+  box.innerHTML='';
+
   const ext=(d.filename&&(d.filename.match(/\.(\w{2,4})$/)||[])[1])||null;
   const base=(d.source||'media').split('.')[0]+'_'+(d.id||Date.now());
+
   items.forEach((it,i)=>{
     if(!it.download_url)return;
-    const kind=it.type==='audio'?'Audio':it.type==='video'?'Video':'Foto';
+
+    const kind=it.type==='audio'
+      ?'Audio'
+      :it.type==='video'
+        ?'Video'
+        :'Foto';
+
     const e=ext||(it.type==='audio'?'mp3':it.type==='video'?'mp4':'jpg');
+
     const row=mk('div','it');
-    row.append(mk('span','',kind+(album?' '+(i+1):'')+(d.quality&&!album?' '+d.quality:'')));
+
+    row.append(
+      mk(
+        'span',
+        '',
+        kind+
+        (album?' '+(i+1):'')+
+        (d.quality&&!album?' '+d.quality:'')
+      )
+    );
+
     const b1=mk('button','b','Unduh');
-    b1.onclick=()=>save(it.download_url,base+(album?'_'+(i+1):'')+'.'+e,b1);
+
+    b1.onclick=()=>{
+      save(
+        it.download_url,
+        base+(album?'_'+(i+1):'')+'.'+e,
+        b1
+      )
+    };
+
     const b2=mk('button','gl','Buka');
-    b2.onclick=()=>window.open(it.download_url,'_blank','noopener,noreferrer');
-    row.append(b1,b2);box.append(row);
+
+    b2.onclick=()=>{
+      window.open(
+        it.download_url,
+        '_blank',
+        'noopener,noreferrer'
+      )
+    };
+
+    row.append(b1,b2);
+    box.append(row);
   });
+
   if(d.music_url){
-    const row=mk('div','it');row.append(mk('span','','Audio asli'));
-    const b1=mk('button','b','Unduh');b1.onclick=()=>save(d.music_url,base+'.mp3',b1);
-    const b2=mk('button','gl','Buka');b2.onclick=()=>window.open(d.music_url,'_blank','noopener,noreferrer');
-    row.append(b1,b2);box.append(row);
+    const row=mk('div','it');
+    row.append(mk('span','','Audio asli'));
+
+    const b1=mk('button','b','Unduh');
+
+    b1.onclick=()=>{
+      save(d.music_url,base+'.mp3',b1)
+    };
+
+    const b2=mk('button','gl','Buka');
+
+    b2.onclick=()=>{
+      window.open(
+        d.music_url,
+        '_blank',
+        'noopener,noreferrer'
+      )
+    };
+
+    row.append(b1,b2);
+    box.append(row);
   }
-  if(!box.children.length)say('Tidak ada file yang bisa diunduh dari link ini','err');
+
+  if(!box.children.length)
+    say('Tidak ada file yang bisa diunduh dari link ini','err');
+
   $('res').style.display='block';
 }
 
 async function save(url,name,btn){
-  const old=btn.textContent;btn.disabled=true;btn.textContent='...';
+  const old=btn.textContent;
+
+  btn.disabled=true;
+  btn.textContent='...';
+
   try{
     const r=await fetch(url);
+
     if(!r.ok)throw 0;
+
     const b=await r.blob(),a=document.createElement('a');
-    a.href=URL.createObjectURL(b);a.download=name;
-    document.body.appendChild(a);a.click();a.remove();
+
+    a.href=URL.createObjectURL(b);
+    a.download=name;
+
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
     toast('Berhasil diunduh');
+
   }catch(e){
-    window.open(url,'_blank','noopener,noreferrer');
+    window.open(
+      url,
+      '_blank',
+      'noopener,noreferrer'
+    );
+
     toast('Dibuka di tab baru, tekan lama untuk simpan');
   }
-  btn.disabled=false;btn.textContent=old;
+
+  btn.disabled=false;
+  btn.textContent=old;
 }
 
-function getH(){try{return JSON.parse(localStorage.getItem('hist')||'[]')}catch(e){return[]}}
-function setH(h){try{localStorage.setItem('hist',JSON.stringify(h))}catch(e){}}
-function addHist(u){setH([u].concat(getH().filter(x=>x!==u)).slice(0,5));renderHist()}
+function getH(){
+  try{
+    return JSON.parse(localStorage.getItem('hist')||'[]')
+  }catch(e){
+    return[]
+  }
+}
+
+function setH(h){
+  try{
+    localStorage.setItem('hist',JSON.stringify(h))
+  }catch(e){}
+}
+
+function addHist(u){
+  setH(
+    [u]
+    .concat(getH().filter(x=>x!==u))
+    .slice(0,5)
+  );
+
+  renderHist()
+}
+
 function renderHist(){
-  const h=getH(),el=$('hist');el.innerHTML='';
-  if(!h.length){el.style.display='none';return}
+  const h=getH(),el=$('hist');
+
+  el.innerHTML='';
+
+  if(!h.length){
+    el.style.display='none';
+    return
+  }
+
   el.style.display='block';
-  const hh=mk('div','hh');hh.append(mk('span','','Terakhir dipakai'));
-  const bt=mk('button','','Hapus');bt.onclick=()=>{setH([]);renderHist()};
-  hh.append(bt);el.append(hh);
+
+  const hh=mk('div','hh');
+
+  hh.append(
+    mk('span','','Terakhir dipakai')
+  );
+
+  const bt=mk('button','','Hapus');
+
+  bt.onclick=()=>{
+    setH([]);
+    renderHist()
+  };
+
+  hh.append(bt);
+  el.append(hh);
+
   h.forEach(u=>{
-    const d=mk('div','hi');d.append(mk('span','',u.replace(/^https?:\/\/(www\.)?/,'')),mk('b','','›'));
-    d.onclick=()=>{$('url').value=u;chips();window.scrollTo({top:0,behavior:'smooth'})};
+    const d=mk('div','hi');
+
+    d.append(
+      mk(
+        'span',
+        '',
+        u.replace(/^https?:\/\/(www\.)?/,'')
+      ),
+      mk('b','','›')
+    );
+
+    d.onclick=()=>{
+      $('url').value=u;
+      chips();
+      window.scrollTo({
+        top:0,
+        behavior:'smooth'
+      })
+    };
+
     el.append(d);
   });
 }
+
 if(PROXY)$('gear').style.display='none';
-chips();renderHist();
+
+chips();
+renderHist();
 </script>
 </body></html>
