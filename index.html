@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="id"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Downloader</title>
+<style>
+:root{--t:#fff;--t2:rgba(255,255,255,.62);--blue:#0a84ff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:#000}
+body{min-height:100vh;font-family:-apple-system,"SF Pro Text",system-ui,Roboto,sans-serif;color:var(--t);padding:max(18px,env(safe-area-inset-top)) 16px max(28px,env(safe-area-inset-bottom));display:flex;justify-content:center}
+.bg{position:fixed;inset:0;z-index:-1;overflow:hidden;background:#000}
+.bg i{position:absolute;border-radius:50%;filter:blur(80px);animation:drift 18s ease-in-out infinite alternate}
+.bg i:nth-child(1){width:300px;height:300px;background:rgba(255,255,255,.16);top:-90px;left:-70px}
+.bg i:nth-child(2){width:340px;height:340px;background:rgba(90,120,170,.28);bottom:-110px;right:-110px;animation-delay:-8s}
+@keyframes drift{to{transform:translate(50px,70px) scale(1.18)}}
+.glass{background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.04));-webkit-backdrop-filter:blur(28px) saturate(180%);backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(255,255,255,.16);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.4),inset 0 -1px 0 rgba(255,255,255,.06),0 20px 50px rgba(0,0,0,.6);border-radius:28px}
+.wrap{width:100%;max-width:460px;margin-top:2vh}
+.head{display:flex;align-items:flex-end;justify-content:space-between;padding:4px 6px 16px;animation:up .6s ease both}
+h1{margin:0;font-size:34px;font-weight:800;letter-spacing:-.8px}
+.sub{margin:3px 0 0;color:var(--t2);font-size:15px}
+.gear{width:42px;height:42px;border-radius:50%;font-size:20px}
+@keyframes up{from{opacity:0;transform:translateY(22px) scale(.98)}}
+.card{padding:16px;animation:up .6s .08s ease both}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chip{font-size:12px;font-weight:600;padding:5px 11px;border-radius:99px;background:rgba(255,255,255,.1);color:var(--t2);transition:.3s}
+.chip.on{background:#fff;color:#000;transform:scale(1.06)}
+.field{display:flex;align-items:center;gap:6px;padding:5px 5px 5px 14px;border-radius:18px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.16);transition:.25s}
+.field:focus-within{border-color:rgba(255,255,255,.6);box-shadow:0 0 0 4px rgba(255,255,255,.1)}
+input{flex:1;min-width:0;border:0;outline:0;background:none;color:#fff;font-size:16px;padding:11px 0;font-family:inherit}
+input::placeholder{color:rgba(255,255,255,.4)}
+button{font-family:inherit;border:0;color:#fff;cursor:pointer;transition:transform .15s,opacity .2s}
+button:active{transform:scale(.95)}
+button:focus-visible,a:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.gl{background:rgba(255,255,255,.16)}
+.mini{padding:10px 14px;border-radius:13px;font-weight:600;font-size:14px}
+.x{width:36px;height:36px;border-radius:50%;font-size:14px;display:none}
+.go{width:100%;margin-top:14px;padding:16px;border-radius:20px;font-size:17px;font-weight:700;background:linear-gradient(180deg,#52b0ff,#0a84ff);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 10px 28px rgba(10,132,255,.4)}
+.go:disabled{opacity:.7}
+.sp{display:inline-block;width:17px;height:17px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite;vertical-align:-3px;margin-right:9px}
+@keyframes rot{to{transform:rotate(360deg)}}
+#msg{margin-top:12px;min-height:20px;text-align:center;font-size:14px;color:var(--t2)}
+#msg.err{color:#ff9d9d}#msg.ok{color:#9dffc0}
+#res{display:none;margin-top:16px;padding:12px;animation:up .45s ease both}
+#res img{width:100%;max-height:260px;object-fit:cover;border-radius:20px;display:none;margin-bottom:10px}
+.cap{font-size:14px;line-height:1.45;padding:2px 4px}
+.meta{font-size:12px;color:var(--t2);padding:2px 4px 10px}
+.it{display:flex;align-items:center;gap:8px;padding:10px 4px;border-top:1px solid rgba(255,255,255,.12)}
+.it span{flex:1;font-size:15px;font-weight:600}
+.it button{padding:10px 16px;border-radius:13px;font-size:14px;font-weight:600}
+.it .b{background:var(--blue)}
+.foot{text-align:center;color:rgba(255,255,255,.4);font-size:12px;margin-top:18px}
+#toast{position:fixed;left:50%;top:max(14px,env(safe-area-inset-top));transform:translate(-50%,-90px);padding:12px 20px;border-radius:99px;font-size:14px;font-weight:600;transition:transform .5s cubic-bezier(.3,1.4,.5,1);z-index:30;white-space:nowrap}
+#toast.show{transform:translate(-50%,0)}
+#ov{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;justify-content:center;z-index:20;padding:16px}
+#ov.show{display:flex}
+.sheet{width:100%;max-width:460px;padding:20px;animation:up .35s ease both}
+.sheet h2{margin:0 0 6px;font-size:20px}
+.sheet p{margin:0 0 14px;color:var(--t2);font-size:14px;line-height:1.45}
+.sheet a{color:#6cb4ff}
+.sheet .row{display:flex;gap:8px;margin-top:14px}
+.sheet .row button{flex:1;padding:14px;border-radius:16px;font-size:16px;font-weight:600}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="bg"><i></i><i></i></div>
+<div id="toast" class="glass" role="status"></div>
+<div class="wrap">
+  <div class="head">
+    <div><h1>Downloader</h1><p class="sub">Tempel link, ketuk Ambil.</p></div>
+    <button class="gear gl" onclick="openSheet()" aria-label="Atur API key">⚙︎</button>
+  </div>
+  <div class="card glass">
+    <div class="chips">
+      <span class="chip" data-p="tiktok">TikTok</span>
+      <span class="chip" data-p="instagram">Instagram</span>
+      <span class="chip" data-p="facebook fb.watch fb.com">Facebook</span>
+      <span class="chip" data-p="twitter x.com">X</span>
+      <span class="chip" data-p="pinterest pin.it">Pinterest</span>
+    </div>
+    <div class="field">
+      <input id="url" placeholder="Tempel link di sini" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Link video">
+      <button class="x gl" id="x" onclick="clearAll()" aria-label="Hapus link">✕</button>
+      <button class="mini gl" onclick="pasteLink()">Tempel</button>
+    </div>
+    <button class="go" id="go" onclick="fetchInfo()">Ambil</button>
+    <div id="msg" aria-live="polite"></div>
+    <div id="res" class="glass">
+      <img id="th" referrerpolicy="no-referrer" alt="">
+      <div class="cap" id="cap"></div>
+      <div class="meta" id="meta"></div>
+      <div id="items"></div>
+    </div>
+  </div>
+  <p class="foot">Gunakan untuk konten milik sendiri atau yang diizinkan.</p>
+</div>
+
+<div id="ov" onclick="if(event.target==this)closeSheet()">
+  <div class="sheet glass" role="dialog" aria-label="API key">
+    <h2>API key</h2>
+    <p>Web ini memakai FastSaverAPI. Daftar gratis di <a href="https://api.fastsaver.io/auth" target="_blank" rel="noopener">api.fastsaver.io/auth</a>, salin key (awalan <b>fs_sk_</b>), lalu tempel di sini. Key hanya disimpan di browser ini.</p>
+    <div class="field"><input id="key" type="password" placeholder="fs_sk_..." autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="API key"></div>
+    <div class="row">
+      <button class="gl" onclick="closeSheet()">Batal</button>
+      <button style="background:var(--blue)" onclick="saveKey()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API='https://api.fastsaver.io/v1/fetch?url=';
+const DEFAULT_KEY=''; // biarkan kosong, jangan tulis key di sini
+const $=id=>document.getElementById(id);
+function getKey(){try{return localStorage.getItem('fsk')||DEFAULT_KEY}catch(e){return DEFAULT_KEY}}
+function say(s,c){$('msg').className=c||'';$('msg').textContent=s}
+function toast(s){const t=$('toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
+function openSheet(){$('key').value=getKey();$('ov').classList.add('show')}
+function closeSheet(){$('ov').classList.remove('show')}
+function saveKey(){const v=$('key').value.trim();try{localStorage.setItem('fsk',v)}catch(e){}closeSheet();toast(v?'Key tersimpan':'Key dihapus')}
+
+function chips(){
+  const u=$('url').value.toLowerCase();
+  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',!!u&&c.dataset.p.split(' ').some(p=>u.includes(p))));
+  $('x').style.display=u?'block':'none';
+}
+$('url').addEventListener('input',chips);
+$('url').addEventListener('keydown',e=>{if(e.key==='Enter')fetchInfo()});
+async function pasteLink(){
+  try{$('url').value=await navigator.clipboard.readText();chips()}
+  catch(e){say('Tekan lama di kotak, lalu pilih Tempel','err')}
+}
+function clearAll(){$('url').value='';$('res').style.display='none';say('');chips();$('url').focus()}
+
+function pick(d){
+  if(!d)return '';
+  const v=d.error||d.detail||d.message||'';
+  return typeof v==='string'?v:JSON.stringify(v).slice(0,120);
+}
+function errText(status,d){
+  const m=pick(d);
+  if(status===401)return 'API key salah atau belum diisi';
+  if(status===429)return 'Terlalu cepat, tunggu sekitar semenit';
+  if(/credit/i.test(m))return 'Kredit API habis';
+  return m||'Link tidak bisa diambil (privat, dihapus, atau tidak didukung)';
+}
+
+async function fetchInfo(){
+  const u=$('url').value.trim();
+  if(!u)return say('Isi link dulu','err');
+  if(!getKey()){say('Isi API key dulu lewat tombol ⚙︎','err');openSheet();return}
+  const g=$('go');g.disabled=true;g.innerHTML='<span class="sp"></span>Mengambil...';
+  say('');$('res').style.display='none';
+  try{
+    const r=await fetch(API+encodeURIComponent(u),{headers:{'X-Api-Key':getKey()}});
+    let d=null;try{d=await r.json()}catch(e){}
+    if(!d||d.ok===false||!r.ok)throw errText(r.status,d);
+    show(d);
+  }catch(e){
+    say(typeof e==='string'?e:'Gagal terhubung ke server API (mungkin diblokir browser)','err');
+  }
+  g.disabled=false;g.textContent='Ambil';
+}
+
+function mk(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+
+function show(d){
+  const album=d.type==='album';
+  const items=album?(d.items||[]):[{type:d.type,download_url:d.download_url,thumbnail_url:d.thumbnail_url,width:d.width,height:d.height}];
+  const th=d.thumbnail_url||(items[0]&&items[0].thumbnail_url)||'';
+  const im=$('th');
+  if(th){im.onerror=()=>{im.style.display='none'};im.src=th;im.style.display='block'}else im.style.display='none';
+  $('cap').textContent=(d.caption||'').slice(0,160);
+  const bits=[d.source,album?(items.length+' item'):d.type];
+  if(d.width&&d.height)bits.push(d.width+'×'+d.height);
+  if(d.duration)bits.push(d.duration+' detik');
+  $('meta').textContent=bits.filter(Boolean).join(', ');
+  const box=$('items');box.innerHTML='';
+  const base=(d.source||'media').split('.')[0]+'_'+(d.id||Date.now());
+  items.forEach((it,i)=>{
+    if(!it.download_url)return;
+    const vid=it.type==='video';
+    const row=mk('div','it');
+    row.append(mk('span','',(vid?'Video':'Foto')+(album?' '+(i+1):'')));
+    const b1=mk('button','b','Unduh');
+    b1.onclick=()=>save(it.download_url,base+(album?'_'+(i+1):'')+(vid?'.mp4':'.jpg'),b1);
+    const b2=mk('button','gl','Buka');
+    b2.onclick=()=>window.open(it.download_url,'_blank','noopener,noreferrer');
+    row.append(b1,b2);box.append(row);
+  });
+  if(d.music_url){
+    const row=mk('div','it');row.append(mk('span','','Audio asli'));
+    const b1=mk('button','b','Unduh');b1.onclick=()=>save(d.music_url,base+'.mp3',b1);
+    const b2=mk('button','gl','Buka');b2.onclick=()=>window.open(d.music_url,'_blank','noopener,noreferrer');
+    row.append(b1,b2);box.append(row);
+  }
+  if(!box.children.length)say('Tidak ada file yang bisa diunduh dari link ini','err');
+  $('res').style.display='block';
+}
+
+async function save(url,name,btn){
+  const old=btn.textContent;btn.disabled=true;btn.textContent='...';
+  try{
+    const r=await fetch(url);
+    if(!r.ok)throw 0;
+    const b=await r.blob(),a=document.createElement('a');
+    a.href=URL.createObjectURL(b);a.download=name;
+    document.body.appendChild(a);a.click();a.remove();
+    toast('Berhasil diunduh');
+  }catch(e){
+    window.open(url,'_blank','noopener,noreferrer');
+    toast('Dibuka di tab baru, tekan lama untuk simpan');
+  }
+  btn.disabled=false;btn.textContent=old;
+}
+chips();
+</script>
+</body></html>
